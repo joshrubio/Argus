@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored MapLibre worker (copied verbatim from node_modules to work
+    // around the MapLibre + Turbopack worker-loading bug).
+    "public/maplibre-gl-worker.mjs",
   ]),
 ]);
 

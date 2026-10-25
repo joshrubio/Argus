@@ -1,26 +1,135 @@
+/*
+ * Argus — visual identity notes
+ * ──────────────────────────────
+ * Benchmarked against real, publicly documented ops/situational-awareness
+ * tools before any token below was chosen:
+ *   - NASA Open MCT (github.com/nasa/openmct) — open-source mission
+ *     control framework: dense, hierarchical panel layout, telemetry-first.
+ *   - Grafana's dark theme (community reverse-engineering of its design
+ *     tokens, grafana.com/blog — "3 tips to improve your dashboard
+ *     design"): near-black panel backgrounds, small/tight corner radii,
+ *     a single strong accent reserved for alerts rather than decoration,
+ *     Inter for UI text and a monospace face for data readouts/labels.
+ *   - MarineTraffic's 2023 web redesign (kpler.com/blog/designing-the-new-
+ *     marinetraffic-app) — map-first canvas with floating, de-clutterable
+ *     side panels rather than a boxed-in dashboard grid.
+ * None of this is an invented "sci-fi HUD" — it is the real, somewhat dry
+ * visual language of operational monitoring software: dense data tables,
+ * monospace telemetry, restrained color used almost entirely for status.
+ *
+ * Identity choices for Argus specifically (must read distinctly from the
+ * other four satellites — Janus/amber, Siren/cyan, Themis/violet,
+ * Athena/phosphor-green):
+ *   - Accent: a warm signal red-orange. Chosen because Argus is the
+ *     "hundred-eyed giant" — total vigilance — and a flare/alert red is
+ *     the one strong hue none of the other four use. Reserved for the
+ *     accent and for the critical-severity status; it is not used
+ *     decoratively.
+ *   - Type: Inter (UI chrome) + Roboto Mono (telemetry, coordinates,
+ *     timestamps, IDs) — the pairing real dashboard tooling (Grafana)
+ *     actually ships, not a display/HUD font invented for effect.
+ *   - Radius: small (0.4rem) — denser and sharper than Janus/Athena's
+ *     rounder cards, but not the zero-radius terminal look Themis uses.
+ *   - Density: intentionally busy — multiple live panels, a ticking event
+ *     feed, moving map markers — per direction to lean into real density
+ *     rather than minimalism for this one.
+ */
+
 @import "tailwindcss";
+@import "tw-animate-css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(0.975 0.003 260);
+  --panel: oklch(0.945 0.005 258);
+  --panel-raised: oklch(0.99 0.002 260);
+  --border: oklch(0.85 0.008 260);
+  --foreground: oklch(0.2 0.012 260);
+  --muted-foreground: oklch(0.45 0.015 260);
+
+  --accent: oklch(0.58 0.2 32);
+  --accent-foreground: oklch(0.98 0.005 32);
+
+  --status-critical: oklch(0.56 0.21 27);
+  --status-warning: oklch(0.68 0.16 60);
+  --status-caution: oklch(0.76 0.13 85);
+  --status-nominal: oklch(0.56 0.1 160);
+  --status-info: oklch(0.55 0.09 235);
+  --status-offline: oklch(0.55 0.008 260);
+
+  --radius: 0.4rem;
+}
+
+.dark {
+  --background: oklch(0.15 0.008 262);
+  --panel: oklch(0.19 0.009 262);
+  --panel-raised: oklch(0.225 0.01 262);
+  --border: oklch(0.29 0.012 262);
+  --foreground: oklch(0.93 0.004 260);
+  --muted-foreground: oklch(0.63 0.014 260);
+
+  --accent: oklch(0.65 0.2 32);
+  --accent-foreground: oklch(0.14 0.01 32);
+
+  --status-critical: oklch(0.63 0.21 27);
+  --status-warning: oklch(0.74 0.15 62);
+  --status-caution: oklch(0.8 0.12 88);
+  --status-nominal: oklch(0.68 0.1 160);
+  --status-info: oklch(0.68 0.09 235);
+  --status-offline: oklch(0.52 0.008 260);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-panel: var(--panel);
+  --color-panel-raised: var(--panel-raised);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-status-critical: var(--status-critical);
+  --color-status-warning: var(--status-warning);
+  --color-status-caution: var(--status-caution);
+  --color-status-nominal: var(--status-nominal);
+  --color-status-info: var(--status-info);
+  --color-status-offline: var(--status-offline);
+
+  --radius-md: var(--radius);
+  --radius-sm: calc(var(--radius) - 0.15rem);
+  --radius-lg: calc(var(--radius) + 0.2rem);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.font-tabular {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* MapLibre base overrides so the map canvas fills its own panel instead
+   of the library's default absolute-positioned chrome fighting Tailwind. */
+.maplibregl-map {
+  height: 100%;
+  width: 100%;
+}
+.maplibregl-ctrl-attrib {
+  background: transparent !important;
+  color: var(--muted-foreground) !important;
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: var(--muted-foreground) !important;
 }
